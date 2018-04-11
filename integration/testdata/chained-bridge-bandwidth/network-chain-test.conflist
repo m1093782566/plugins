@@ -21,7 +21,7 @@
                     "egressRate": 8000,
                     "egressBurst": 16000
                 }
-            },
+            }
         }
     ]
 }

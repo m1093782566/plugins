@@ -20,7 +20,7 @@
                     "egressRate": 16,
                     "egressBurst": 9
                 }
-            },
+            }
         }
     ]
 }
