@@ -50,6 +50,7 @@ type PluginConf struct {
 
 	RawPrevResult *map[string]interface{} `json:"prevResult"`
 	PrevResult    *current.Result         `json:"-"`
+	BandWidthEntry
 }
 
 // parseConfig parses the supplied configuration (and prevResult) from stdin.
@@ -75,7 +76,14 @@ func parseConfig(stdin []byte) (*PluginConf, error) {
 			return nil, fmt.Errorf("could not convert result to current version: %v", err)
 		}
 	}
-
+	err := validateRateAndBurst(conf.IngressRate, conf.IngressBurst)
+	if err != nil {
+		return nil, err
+	}
+	err = validateRateAndBurst(conf.EgressRate, conf.EgressBurst)
+	if err != nil {
+		return nil, err
+	}
 	if conf.RuntimeConfig.BandWidth != nil {
 		err := validateRateAndBurst(conf.RuntimeConfig.BandWidth.IngressRate, conf.RuntimeConfig.BandWidth.IngressBurst)
 		if err != nil {
@@ -146,10 +154,20 @@ func cmdAdd(args *skel.CmdArgs) error {
 		return err
 	}
 
-	bandwidth := conf.RuntimeConfig.BandWidth
-	//no traffic shaping was requested, so just no-op and quit
-	if bandwidth == nil || (bandwidth.IngressRate == 0 && bandwidth.IngressBurst == 0 && bandwidth.EgressRate == 0 && bandwidth.EgressBurst == 0) {
-		return types.PrintResult(conf.PrevResult, conf.CNIVersion)
+	var bandwidth *BandWidthEntry
+	if conf.IngressRate == 0 && conf.IngressBurst == 0 && conf.EgressRate == 0 && conf.EgressBurst == 0 {
+		bandwidth := conf.RuntimeConfig.BandWidth
+		//no traffic shaping was requested, so just no-op and quit
+		if bandwidth == nil || (bandwidth.IngressRate == 0 && bandwidth.IngressBurst == 0 && bandwidth.EgressRate == 0 && bandwidth.EgressBurst == 0) {
+			return types.PrintResult(conf.PrevResult, conf.CNIVersion)
+		}
+	}else {
+		bandwidth = &BandWidthEntry{
+			IngressRate: conf.IngressRate,
+			IngressBurst: conf.IngressBurst,
+			EgressRate: conf.EgressRate,
+			EgressBurst: conf.EgressBurst,
+		}
 	}
 
 	if conf.PrevResult == nil {
