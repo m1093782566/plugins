@@ -161,12 +161,12 @@ func cmdAdd(args *skel.CmdArgs) error {
 		if bandwidth == nil || (bandwidth.IngressRate == 0 && bandwidth.IngressBurst == 0 && bandwidth.EgressRate == 0 && bandwidth.EgressBurst == 0) {
 			return types.PrintResult(conf.PrevResult, conf.CNIVersion)
 		}
-	}else {
+	} else {
 		bandwidth = &BandWidthEntry{
-			IngressRate: conf.IngressRate,
+			IngressRate:  conf.IngressRate,
 			IngressBurst: conf.IngressBurst,
-			EgressRate: conf.EgressRate,
-			EgressBurst: conf.EgressBurst,
+			EgressRate:   conf.EgressRate,
+			EgressBurst:  conf.EgressBurst,
 		}
 	}
 
