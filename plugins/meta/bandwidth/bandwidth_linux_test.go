@@ -644,7 +644,7 @@ var _ = Describe("bandwidth test", func() {
 				Expect(err).NotTo(HaveOccurred())
 
 				tbfPluginConf := PluginConf{}
-				tbfPluginConf.RuntimeConfig.BandWidth = &BandWidthEntry{
+				tbfPluginConf.RuntimeConfig.Bandwidth = &BandwidthEntry{
 					IngressBurst: burstInBits,
 					IngressRate:  rateInBits,
 					EgressBurst:  burstInBits,
